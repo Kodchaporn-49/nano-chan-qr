@@ -52,6 +52,7 @@ export interface Translations {
     // Photo Card fields
     photoUrlLabel: string;
     photoPresets: string;
+    toggleCenterEmoji: string;
     uploadPhotoBtn: string;
     photoPreview: string;
     changePhoto: string;
@@ -138,6 +139,7 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       quickPresets: "Quick Message Suggestions",
       photoUrlLabel: "Photo Image URL",
       photoPresets: "Sample Photos",
+      toggleCenterEmoji: "Show Center Emoji / Sticker",
       uploadPhotoBtn: "Upload Photo 📁",
       photoPreview: "Photo Preview",
       changePhoto: "Change",
@@ -220,6 +222,7 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       quickPresets: "ข้อความสำเร็จรูป",
       photoUrlLabel: "ลิงก์รูปภาพ (URL)",
       photoPresets: "รูปตัวอย่าง",
+      toggleCenterEmoji: "แสดง Emoji / สติกเกอร์ตรงกลาง QR Code",
       uploadPhotoBtn: "อัปโหลดรูปภาพ 📁",
       photoPreview: "ตัวอย่างรูปภาพ",
       changePhoto: "เปลี่ยนรูป",
@@ -302,6 +305,7 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       quickPresets: "추천 축하 문구",
       photoUrlLabel: "사진 이미지 URL",
       photoPresets: "샘플 사진",
+      toggleCenterEmoji: "QR 코드 중앙 이모지/스티커 표시",
       uploadPhotoBtn: "사진 업로드 📁",
       photoPreview: "사진 미리보기",
       changePhoto: "변경",
@@ -384,6 +388,7 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       quickPresets: "定型文から選ぶ",
       photoUrlLabel: "写真画像URL",
       photoPresets: "サンプル写真",
+      toggleCenterEmoji: "QRコード中央の絵文字/ステッカー表示",
       uploadPhotoBtn: "写真をアップロード 📁",
       photoPreview: "写真プレビュー",
       changePhoto: "変更",

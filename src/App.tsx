@@ -214,8 +214,8 @@ const WEDDING_WISHES_QUICK = [
   'Wishing you a lifetime of joy, laughter, and sweet cherished moments together! 💒💕',
 ];
 
-// Helper function to compress and scale down image for direct embedding inside QR Code (max 120-140px, under 1.5KB)
-const compressImageForQR = (img: HTMLImageElement, maxDimension = 120, quality = 0.55): string => {
+// Helper function to optimize and prepare High-Definition (HD) image for Greeting & Photo Cards (without pixelation/blur)
+const optimizeImageForHD = (img: HTMLImageElement, maxDimension = 1200, quality = 0.88): string => {
   let width = img.width;
   let height = img.height;
 
@@ -231,33 +231,13 @@ const compressImageForQR = (img: HTMLImageElement, maxDimension = 120, quality =
   canvas.width = Math.max(1, width);
   canvas.height = Math.max(1, height);
   const ctx = canvas.getContext('2d');
-  if (!ctx) return '';
+  if (!ctx) return img.src;
 
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(img, 0, 0, width, height);
 
-  let compressed = canvas.toDataURL('image/jpeg', quality);
-
-  // If payload is still larger than 2000 characters, perform a second aggressive pass (max 90px, 0.45 quality)
-  if (compressed.length > 2000) {
-    const smallerDim = 90;
-    let sWidth = img.width;
-    let sHeight = img.height;
-    if (sWidth > sHeight && sWidth > smallerDim) {
-      sHeight = Math.round((sHeight * smallerDim) / sWidth);
-      sWidth = smallerDim;
-    } else if (sHeight > smallerDim) {
-      sWidth = Math.round((sWidth * smallerDim) / sHeight);
-      sHeight = smallerDim;
-    }
-    canvas.width = Math.max(1, sWidth);
-    canvas.height = Math.max(1, sHeight);
-    ctx.clearRect(0, 0, sWidth, sHeight);
-    ctx.drawImage(img, 0, 0, sWidth, sHeight);
-    compressed = canvas.toDataURL('image/jpeg', 0.45);
-  }
-  return compressed;
+  return canvas.toDataURL('image/jpeg', quality);
 };
 
 export default function App() {
@@ -317,6 +297,7 @@ export default function App() {
   const [activePreset, setActivePreset] = useState<string>('rose-gold');
   const [fgColor, setFgColor] = useState('#B76E79');
   const [bgColor, setBgColor] = useState('#FFF8F6');
+  const [showCenterEmoji, setShowCenterEmoji] = useState<boolean>(true);
   const [centerBadge, setCenterBadge] = useState<CenterBadgeType>('ring');
   const [customLogoUrl, setCustomLogoUrl] = useState<string>('');
   const [includeFrame, setIncludeFrame] = useState(true);
@@ -656,14 +637,19 @@ export default function App() {
         return;
       }
 
-      // Automatically downscale and compress via canvas (max 120-140px, < 1.5KB) so it embeds directly into the QR Code
+      // Process image in Crystal Clear HD (up to 1200px, 0.88 quality) so Greeting Cards display crisp photos without pixelation
       const img = new Image();
       img.onload = () => {
-        const optimizedDataUrl = compressImageForQR(img, 120, 0.55);
+        const hdDataUrl = optimizeImageForHD(img, 1200, 0.88);
+        const photoKey = `photo_${Date.now()}`;
+        try {
+          localStorage.setItem(`vibrant_local_photo_${photoKey}`, hdDataUrl);
+        } catch {}
+        
         setPhotoCardData((prev) => ({ 
           ...prev, 
-          imageUrl: optimizedDataUrl || rawDataUrl,
-          localPhotoKey: undefined
+          imageUrl: hdDataUrl,
+          localPhotoKey: photoKey
         }));
         setIsPhotoUploading(false);
 
@@ -709,11 +695,16 @@ export default function App() {
 
       const img = new Image();
       img.onload = () => {
-        const optimizedDataUrl = compressImageForQR(img, 120, 0.55);
+        const hdDataUrl = optimizeImageForHD(img, 1200, 0.88);
+        const photoKey = `wphoto_${Date.now()}`;
+        try {
+          localStorage.setItem(`vibrant_local_photo_${photoKey}`, hdDataUrl);
+        } catch {}
+
         setWeddingInviteData((prev) => ({ 
           ...prev, 
-          photoUrl: optimizedDataUrl || rawDataUrl,
-          localPhotoKey: undefined
+          photoUrl: hdDataUrl,
+          localPhotoKey: photoKey
         }));
         setIsWeddingPhotoUploading(false);
 
@@ -1662,69 +1653,115 @@ export default function App() {
               
               {/* Center Stickers / Logos Customization */}
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-1.5">
-                    <Smile className={`w-4 h-4 ${isWedding ? 'text-[#B76E79]' : 'text-[#9575CD]'}`} />
-                    <h3 className={`text-xs font-bold ${isWedding ? 'text-[#5C3A42]' : 'text-[#6D5D6E]'}`}>
-                      {isWedding ? 'Center Sticker / Wedding Badge' : t.form.centerSticker}
-                    </h3>
+                {/* Center Emoji / Sticker Toggle Switch */}
+                <div className={`p-3 rounded-2xl border mb-3 flex items-center justify-between transition-colors ${
+                  showCenterEmoji 
+                    ? isWedding ? 'bg-[#FDF2EC]/70 border-[#E8D3C4]' : 'bg-[#FFF0F5]/70 border-[#FFC0CB]'
+                    : 'bg-[#F9F9F9] border-gray-200'
+                }`}>
+                  <div className="flex items-center gap-2">
+                    <span className="text-base select-none">{showCenterEmoji ? (isWedding ? '💍' : '🌸') : '⚪'}</span>
+                    <div>
+                      <h3 className={`text-xs font-bold ${isWedding ? 'text-[#5C3A42]' : 'text-[#6D5D6E]'}`}>
+                        {t.form.toggleCenterEmoji}
+                      </h3>
+                      <p className="text-[10px] text-gray-500">
+                        {showCenterEmoji 
+                          ? (isWedding ? 'Center wedding sticker active' : 'Center kawaii emoji active') 
+                          : 'Clean standard QR Code (no center icon)'}
+                      </p>
+                    </div>
                   </div>
 
-                  {customLogoUrl && (
-                    <button
-                      type="button"
-                      onClick={() => setCustomLogoUrl('')}
-                      className="text-[10px] text-red-500 hover:underline cursor-pointer"
-                    >
-                      Remove Logo
-                    </button>
-                  )}
+                  {/* Accessible Toggle Button */}
+                  <button
+                    type="button"
+                    onClick={() => setShowCenterEmoji(!showCenterEmoji)}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
+                      showCenterEmoji 
+                        ? isWedding ? 'bg-[#B76E79]' : 'bg-[#FF85A1]' 
+                        : 'bg-gray-300'
+                    }`}
+                    role="switch"
+                    aria-checked={showCenterEmoji}
+                    title={t.form.toggleCenterEmoji}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                        showCenterEmoji ? 'translate-x-5' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
                 </div>
 
-                {/* Sticker Badges Grid */}
-                <div className="flex flex-wrap gap-1.5 mb-2.5">
-                  {stickerBadges.map((badge) => {
-                    const isSelected = !customLogoUrl && centerBadge === badge.id;
-                    return (
+                {/* Badges Grid (active only when toggle is on) */}
+                <div className={`transition-all duration-300 ${!showCenterEmoji ? 'opacity-40 pointer-events-none grayscale' : ''}`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <Smile className={`w-4 h-4 ${isWedding ? 'text-[#B76E79]' : 'text-[#9575CD]'}`} />
+                      <h4 className={`text-xs font-bold ${isWedding ? 'text-[#5C3A42]' : 'text-[#6D5D6E]'}`}>
+                        {isWedding ? 'Choose Wedding Sticker' : t.form.centerSticker}
+                      </h4>
+                    </div>
+
+                    {customLogoUrl && (
                       <button
-                        key={badge.id}
                         type="button"
-                        onClick={() => {
-                          setCustomLogoUrl('');
-                          setCenterBadge(badge.id);
-                        }}
-                        className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all cursor-pointer flex items-center gap-1 ${
-                          isSelected
-                            ? isWedding
-                              ? 'bg-gradient-to-r from-[#B76E79] to-[#D4AF37] text-white shadow-xs scale-103'
-                              : 'bg-gradient-to-r from-[#FF85A1] to-[#FFA3B8] text-white shadow-xs scale-103'
-                            : isWedding
-                              ? 'bg-[#FAF9F6] text-[#7D5A63] hover:bg-[#FDF2EC] border border-[#E8D3C4]'
-                              : 'bg-[#FAF9F6] text-[#6D5D6E] hover:bg-[#FFF0F5] border border-[#FFE4E1]'
-                        }`}
+                        onClick={() => setCustomLogoUrl('')}
+                        className="text-[10px] text-red-500 hover:underline cursor-pointer"
                       >
-                        <span>{badge.icon}</span>
-                        <span>{badge.label}</span>
+                        Remove Logo
                       </button>
-                    );
-                  })}
-                </div>
+                    )}
+                  </div>
 
-                {/* Upload Custom Logo Button */}
-                <label className={`w-full py-1.5 px-3 rounded-xl bg-[#FAF9F6] border border-dashed text-[11px] font-semibold flex items-center justify-center gap-1.5 cursor-pointer transition-colors ${
-                  isWedding 
-                    ? 'border-[#E8D3C4] hover:bg-[#FDF2EC] text-[#7D5A63]' 
-                    : 'border-[#FFC0CB] hover:bg-[#FFF0F5] text-[#6D5D6E]'
-                }`}>
-                  <Upload className={`w-3.5 h-3.5 ${isWedding ? 'text-[#B76E79]' : 'text-[#FF85A1]'}`} />
-                  <span>{customLogoUrl ? '✓ Change Custom Logo' : '+ Upload Center Photo / Custom Logo'}</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleCustomLogoUpload}
-                    className="hidden"
-                  />
-                </label>
+                  {/* Sticker Badges Grid */}
+                  <div className="flex flex-wrap gap-1.5 mb-2.5">
+                    {stickerBadges.map((badge) => {
+                      const isSelected = !customLogoUrl && centerBadge === badge.id;
+                      return (
+                        <button
+                          key={badge.id}
+                          type="button"
+                          disabled={!showCenterEmoji}
+                          onClick={() => {
+                            setCustomLogoUrl('');
+                            setCenterBadge(badge.id);
+                          }}
+                          className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all cursor-pointer flex items-center gap-1 ${
+                            isSelected
+                              ? isWedding
+                                ? 'bg-gradient-to-r from-[#B76E79] to-[#D4AF37] text-white shadow-xs scale-103'
+                                : 'bg-gradient-to-r from-[#FF85A1] to-[#FFA3B8] text-white shadow-xs scale-103'
+                              : isWedding
+                                ? 'bg-[#FAF9F6] text-[#7D5A63] hover:bg-[#FDF2EC] border border-[#E8D3C4]'
+                                : 'bg-[#FAF9F6] text-[#6D5D6E] hover:bg-[#FFF0F5] border border-[#FFE4E1]'
+                          }`}
+                        >
+                          <span>{badge.icon}</span>
+                          <span>{badge.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Upload Custom Logo Button */}
+                  <label className={`w-full py-1.5 px-3 rounded-xl bg-[#FAF9F6] border border-dashed text-[11px] font-semibold flex items-center justify-center gap-1.5 cursor-pointer transition-colors ${
+                    isWedding 
+                      ? 'border-[#E8D3C4] hover:bg-[#FDF2EC] text-[#7D5A63]' 
+                      : 'border-[#FFC0CB] hover:bg-[#FFF0F5] text-[#6D5D6E]'
+                  }`}>
+                    <Upload className={`w-3.5 h-3.5 ${isWedding ? 'text-[#B76E79]' : 'text-[#FF85A1]'}`} />
+                    <span>{customLogoUrl ? '✓ Change Custom Logo' : '+ Upload Center Photo / Custom Logo'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      disabled={!showCenterEmoji}
+                      onChange={handleCustomLogoUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
 
               {/* Color Palettes */}
@@ -1818,8 +1855,8 @@ export default function App() {
               text={qrPayload}
               fgColor={fgColor}
               bgColor={bgColor}
-              centerBadge={centerBadge}
-              customLogoUrl={customLogoUrl}
+              centerBadge={showCenterEmoji ? centerBadge : 'none'}
+              customLogoUrl={showCenterEmoji ? customLogoUrl : ''}
               includeFrame={includeFrame}
               frameText={frameText}
               onSaveToHistory={saveToHistory}
