@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Mali', 'Itim', 'Quicksand', cursive, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    color: #6D5D6E;
+    overflow-x: hidden;
+  }
+}
+
+/* Polka Dots & Theme Backgrounds */
+.bg-kawaii-pattern {
+  background-color: #FFF2F6;
+  background-image: 
+    radial-gradient(circle, rgba(255, 182, 193, 0.35) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(255, 230, 240, 0.5) 1px, transparent 1px);
+  background-size: 28px 28px, 14px 14px;
+  background-position: 0 0, 14px 14px;
+}
+
+.bg-wedding-pattern {
+  background-color: #FFF9F6;
+  background-image: 
+    radial-gradient(circle, rgba(212, 175, 55, 0.25) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(232, 211, 196, 0.4) 1px, transparent 1px);
+  background-size: 32px 32px, 16px 16px;
+  background-position: 0 0, 16px 16px;
+}
+
+/* Custom cute animations */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(3deg);
+  }
+}
+
+@keyframes floatDrift {
+  0%, 100% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  33% {
+    transform: translate(4px, -6px) rotate(4deg);
+  }
+  66% {
+    transform: translate(-3px, -10px) rotate(-3deg);
+  }
+}
+
+@keyframes twinkleSoft {
+  0%, 100% {
+    opacity: 0.22;
+    transform: scale(0.88);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes twinkleStar {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.9) rotate(0deg);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2) rotate(15deg);
+  }
+}
+
+@keyframes sparkleGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.3));
+    opacity: 0.3;
+  }
+  50% {
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.75));
+    opacity: 0.75;
+  }
+}
+
+@keyframes gentleSway {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-12px) scale(1.05);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 4.5s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: floatSlow 5s ease-in-out infinite 1.8s;
+}
+
+.animate-twinkle-1 {
+  animation: twinkleSoft 3.2s ease-in-out infinite;
+}
+
+.animate-twinkle-2 {
+  animation: twinkleStar 4.5s ease-in-out infinite 1.2s;
+}
+
+.animate-twinkle-3 {
+  animation: twinkleSoft 5.2s ease-in-out infinite 2.4s;
+}
+
+.animate-twinkle-4 {
+  animation: sparkleGlow 3.8s ease-in-out infinite 0.7s;
+}
+
+.animate-drift-slow {
+  animation: floatDrift 6s ease-in-out infinite;
+}
+
+.animate-drift-delayed {
+  animation: floatDrift 7.5s ease-in-out infinite 2s;
+}
+
+/* Vibrant Palette custom shadows */
+.vibrant-card-shadow {
+  box-shadow: 0 20px 35px -8px rgba(255, 192, 203, 0.45), 0 8px 20px -4px rgba(230, 230, 250, 0.35);
+}
+
+.vibrant-btn-shadow {
+  box-shadow: 0 8px 20px -4px rgba(255, 133, 161, 0.45);
+}
+
+.vibrant-lavender-btn-shadow {
+  box-shadow: 0 6px 16px -2px rgba(209, 209, 245, 0.5);
+}
+
+/* Custom cute scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFF0F5;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FFB7CD;
+  border-radius: 10px;
+  border: 2px solid #FFF0F5;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF85A2;
+}

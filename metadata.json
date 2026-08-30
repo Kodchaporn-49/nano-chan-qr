@@ -1,0 +1,7 @@
+{
+  "name": "Kawaii QR Code Generator",
+  "description": "Nano-chan's Kawaii QR Magic - cute QR Code and Wedding Smart Card generator with Google Maps directions, event schedule, calendar sync, and interactive guestbook.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
