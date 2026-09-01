@@ -204,12 +204,12 @@ export function GreetingViewer({
                 </h3>
 
                 {weddingWishesData.photoUrl && (
-                  <div className="w-full max-w-xs aspect-4/3 rounded-3xl overflow-hidden border-4 border-white shadow-md mb-4 bg-[#FDF2EC] relative flex items-center justify-center">
+                  <div className="w-full max-w-sm sm:max-w-md min-h-[220px] sm:min-h-[280px] rounded-3xl overflow-hidden border-4 border-white shadow-xl mb-4 bg-gradient-to-br from-[#FFFDFD] via-[#FDF2EC] to-[#FAF0E6] relative flex items-center justify-center p-2">
                     <img
                       src={weddingWishesData.photoUrl}
                       alt="Wishes Photo"
                       referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover"
+                      className="w-full h-auto max-h-[440px] object-contain rounded-2xl transition-transform duration-300 hover:scale-[1.02] shadow-xs"
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
                         const placeholder = e.currentTarget.nextElementSibling as HTMLElement;
@@ -219,10 +219,10 @@ export function GreetingViewer({
                       }}
                     />
                     <div 
-                      className="w-full h-full flex-col items-center justify-center p-4 text-center bg-[#FDF2EC] select-none"
+                      className="w-full h-full min-h-[200px] flex-col items-center justify-center p-6 text-center bg-[#FDF2EC] select-none"
                       style={{ display: 'none' }}
                     >
-                      <div className="text-3xl mb-1">🥂💍</div>
+                      <div className="text-4xl mb-2">🥂💍</div>
                       <span className="text-xs font-bold text-[#A66C78]">Sweet Wedding Moments ✨</span>
                     </div>
                   </div>
@@ -290,14 +290,14 @@ export function GreetingViewer({
                   )}
 
                   {/* Photo Card Frame with Guaranteed No-Broken-Image Fallback */}
-                  <div className="w-full max-w-xs aspect-4/3 rounded-3xl overflow-hidden border-4 border-white shadow-md mb-4 bg-gradient-to-br from-[#FFF0F5] via-[#FFF9FB] to-[#F7F0FF] relative group flex items-center justify-center">
+                  <div className="w-full max-w-sm sm:max-w-md min-h-[260px] sm:min-h-[300px] rounded-3xl overflow-hidden border-4 border-white shadow-xl mb-4 bg-gradient-to-br from-[#FFF0F5] via-[#FFF9FB] to-[#F7F0FF] relative group flex items-center justify-center p-2">
                     {displayImage ? (
                       <>
                         <img
                           src={displayImage}
                           alt="Card Photo"
                           referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          className="w-full h-auto max-h-[480px] object-contain rounded-2xl transition-transform duration-300 group-hover:scale-[1.02] shadow-xs"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                             const placeholder = e.currentTarget.nextElementSibling as HTMLElement;
@@ -308,7 +308,7 @@ export function GreetingViewer({
                         />
                         {/* Fallback Cute Pastel Placeholder if image fails */}
                         <div 
-                          className="w-full h-full flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-[#FFF0F5] via-[#FFF9FB] to-[#F3E5F5] select-none"
+                          className="w-full h-full min-h-[220px] flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-[#FFF0F5] via-[#FFF9FB] to-[#F3E5F5] select-none"
                           style={{ display: 'none' }}
                         >
                           <div className="w-14 h-14 rounded-2xl bg-white/90 shadow-xs flex items-center justify-center text-3xl mb-2 border border-[#FFD5DE] animate-pulse">
@@ -320,7 +320,7 @@ export function GreetingViewer({
                       </>
                     ) : (
                       /* Default Cute Pastel Illustration when no photo is provided */
-                      <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-[#FFF0F5] via-[#FFF9FB] to-[#F3E5F5] select-none">
+                      <div className="w-full h-full min-h-[220px] flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-[#FFF0F5] via-[#FFF9FB] to-[#F3E5F5] select-none">
                         <div className="w-14 h-14 rounded-2xl bg-white/90 shadow-xs flex items-center justify-center text-3xl mb-2 border border-[#FFD5DE] animate-bounce" style={{ animationDuration: '3s' }}>
                           🌸
                         </div>

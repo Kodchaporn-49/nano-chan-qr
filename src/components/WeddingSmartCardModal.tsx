@@ -244,12 +244,12 @@ export function WeddingSmartCardModal({ isOpen, onClose, data }: WeddingSmartCar
             </p>
 
             {/* Hero Main Photo */}
-            <div className="relative w-full max-w-md aspect-4/3 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-[#FDF2EC] group flex items-center justify-center">
+            <div className="relative w-full max-w-lg min-h-[260px] sm:min-h-[320px] rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-gradient-to-br from-[#FFFDFD] via-[#FDF2EC] to-[#FAF0E6] group flex items-center justify-center p-2">
               <img
                 src={data.photoUrl || (data.localPhotoKey ? (typeof window !== 'undefined' ? localStorage.getItem(`vibrant_local_photo_${data.localPhotoKey}`) : '') : '') || 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop&q=80'}
                 alt="Wedding Couple"
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700"
+                className="w-full h-auto max-h-[460px] object-contain rounded-2xl group-hover:scale-[1.02] transition-transform duration-500 shadow-xs"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                   const placeholder = e.currentTarget.nextElementSibling as HTMLElement;
@@ -257,14 +257,14 @@ export function WeddingSmartCardModal({ isOpen, onClose, data }: WeddingSmartCar
                 }}
               />
               <div 
-                className="w-full h-full flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-[#FFFDFD] via-[#FDF2EC] to-[#FAF0E6] select-none"
+                className="w-full h-full min-h-[220px] flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-[#FFFDFD] via-[#FDF2EC] to-[#FAF0E6] select-none"
                 style={{ display: 'none' }}
               >
                 <div className="text-4xl mb-2 animate-bounce" style={{ animationDuration: '3s' }}>💍🥂</div>
                 <h4 className="text-base font-bold text-[#5C3A42] font-serif">{data.groomName} & {data.brideName}</h4>
                 <p className="text-xs text-[#8C5D67] mt-1">Together Forever In Love ✨</p>
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent pointer-events-none rounded-3xl" />
               
               {/* Floating Date Tag */}
               <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-auto">

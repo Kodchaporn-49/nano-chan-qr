@@ -1528,11 +1528,11 @@ export default function App() {
                                 {t.form.photoPreview}
                               </span>
                               <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#EDE7F6] text-[#673AB7] font-bold">
-                                {photoCardData.imageUrl.startsWith('data:') ? '📁 Compressed Photo (Embedded in QR 📱)' : '🌐 Web URL (Embedded in QR 📱)'}
+                                {photoCardData.imageUrl.startsWith('data:') ? '📁 HD Photo (Full Aspect Ratio ✨)' : '🌐 Web URL (Full Aspect Ratio ✨)'}
                               </span>
                             </div>
                             <p className="text-[10px] text-gray-500 truncate max-w-[180px] sm:max-w-xs mt-0.5">
-                              {photoCardData.imageUrl.startsWith('data:') ? 'Canvas optimized (~120px) & ready for mobile scan ✨' : photoCardData.imageUrl}
+                              {photoCardData.imageUrl.startsWith('data:') ? 'High-Definition HD & full original photo fitted ✨' : photoCardData.imageUrl}
                             </p>
                             <div className="flex items-center gap-2.5 mt-1">
                               <label 
