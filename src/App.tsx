@@ -38,6 +38,12 @@ import {
   WeddingWishesData, 
   AppThemeMode 
 } from './types';
+import { 
+  processUploadedImage, 
+  DEFAULT_KAWAII_PHOTO, 
+  DEFAULT_WEDDING_INVITE_PHOTO, 
+  DEFAULT_WEDDING_WISHES_PHOTO 
+} from './utils/imageProcessor';
 
 // Color Presets for Kawaii Theme
 const KAWAII_COLOR_PRESETS: ColorPreset[] = [
@@ -604,127 +610,146 @@ export default function App() {
   };
 
   // Upload Custom Logo
-  const handleCustomLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleCustomLogoUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          setCustomLogoUrl(reader.result);
-        }
-      };
-      reader.readAsDataURL(file);
+      try {
+        const processedUrl = await processUploadedImage(file, 400, 0.9);
+        setCustomLogoUrl(processedUrl);
+      } catch {
+        const reader = new FileReader();
+        reader.onload = () => {
+          if (typeof reader.result === 'string') {
+            setCustomLogoUrl(reader.result);
+          }
+        };
+        reader.readAsDataURL(file);
+      }
     }
+    e.target.value = '';
   };
 
   // Upload Local Photo for Kawaii Photo Card
   const [isPhotoUploading, setIsPhotoUploading] = useState(false);
-  const handlePhotoFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      alert('Please select a valid image file (.jpg, .png, .webp)');
-      return;
-    }
-
     setIsPhotoUploading(true);
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const rawDataUrl = event.target?.result as string;
-      if (!rawDataUrl) {
-        setIsPhotoUploading(false);
-        return;
-      }
+    try {
+      // Process and auto-resize image (JPEG, PNG, WEBP, GIF, SVG, HEIC/HEIF) up to 1200px max dimension
+      const hdDataUrl = await processUploadedImage(file, 1200, 0.88);
+      const photoKey = `photo_${Date.now()}`;
+      try {
+        localStorage.setItem(`vibrant_local_photo_${photoKey}`, hdDataUrl);
+      } catch {}
+      
+      setPhotoCardData((prev) => ({ 
+        ...prev, 
+        imageUrl: hdDataUrl,
+        localPhotoKey: photoKey
+      }));
+      setIsPhotoUploading(false);
 
-      // Process image in Crystal Clear HD (up to 1200px, 0.88 quality) so Greeting Cards display crisp photos without pixelation
-      const img = new Image();
-      img.onload = () => {
-        const hdDataUrl = optimizeImageForHD(img, 1200, 0.88);
-        const photoKey = `photo_${Date.now()}`;
-        try {
-          localStorage.setItem(`vibrant_local_photo_${photoKey}`, hdDataUrl);
-        } catch {}
-        
-        setPhotoCardData((prev) => ({ 
-          ...prev, 
-          imageUrl: hdDataUrl,
-          localPhotoKey: photoKey
-        }));
-        setIsPhotoUploading(false);
-
-        confetti({
-          particleCount: 40,
-          spread: 60,
-          origin: { y: 0.6 },
-          colors: ['#BA68C8', '#FF85A1', '#FFD5DE', '#FFFACD'],
-        });
-      };
-      img.onerror = () => {
+      confetti({
+        particleCount: 40,
+        spread: 60,
+        origin: { y: 0.6 },
+        colors: ['#BA68C8', '#FF85A1', '#FFD5DE', '#FFFACD'],
+      });
+    } catch (err) {
+      console.warn('Photo upload fallback', err);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const rawDataUrl = reader.result as string;
         setPhotoCardData((prev) => ({ ...prev, imageUrl: rawDataUrl, localPhotoKey: undefined }));
         setIsPhotoUploading(false);
       };
-      img.src = rawDataUrl;
-    };
-    reader.onerror = () => {
-      setIsPhotoUploading(false);
-    };
-    reader.readAsDataURL(file);
+      reader.onerror = () => setIsPhotoUploading(false);
+      reader.readAsDataURL(file);
+    }
     e.target.value = '';
   };
 
   // Upload Local Photo for Wedding Invitation Card
   const [isWeddingPhotoUploading, setIsWeddingPhotoUploading] = useState(false);
-  const handleWeddingPhotoUpload = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleWeddingPhotoUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      alert('Please select a valid image file (.jpg, .png, .webp)');
-      return;
-    }
-
     setIsWeddingPhotoUploading(true);
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const rawDataUrl = event.target?.result as string;
-      if (!rawDataUrl) {
-        setIsWeddingPhotoUploading(false);
-        return;
-      }
+    try {
+      const hdDataUrl = await processUploadedImage(file, 1200, 0.88);
+      const photoKey = `wphoto_${Date.now()}`;
+      try {
+        localStorage.setItem(`vibrant_local_photo_${photoKey}`, hdDataUrl);
+      } catch {}
 
-      const img = new Image();
-      img.onload = () => {
-        const hdDataUrl = optimizeImageForHD(img, 1200, 0.88);
-        const photoKey = `wphoto_${Date.now()}`;
-        try {
-          localStorage.setItem(`vibrant_local_photo_${photoKey}`, hdDataUrl);
-        } catch {}
+      setWeddingInviteData((prev) => ({ 
+        ...prev, 
+        photoUrl: hdDataUrl,
+        localPhotoKey: photoKey
+      }));
+      setIsWeddingPhotoUploading(false);
 
-        setWeddingInviteData((prev) => ({ 
-          ...prev, 
-          photoUrl: hdDataUrl,
-          localPhotoKey: photoKey
-        }));
-        setIsWeddingPhotoUploading(false);
-
-        confetti({
-          particleCount: 40,
-          spread: 60,
-          origin: { y: 0.6 },
-          colors: ['#B76E79', '#D4AF37', '#FAF0E6', '#FFF0F5'],
-        });
-      };
-      img.onerror = () => {
+      confetti({
+        particleCount: 40,
+        spread: 60,
+        origin: { y: 0.6 },
+        colors: ['#B76E79', '#D4AF37', '#FAF0E6', '#FFF0F5'],
+      });
+    } catch (err) {
+      console.warn('Wedding photo upload fallback', err);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const rawDataUrl = reader.result as string;
         setWeddingInviteData((prev) => ({ ...prev, photoUrl: rawDataUrl, localPhotoKey: undefined }));
         setIsWeddingPhotoUploading(false);
       };
-      img.src = rawDataUrl;
-    };
-    reader.onerror = () => {
-      setIsWeddingPhotoUploading(false);
-    };
-    reader.readAsDataURL(file);
+      reader.onerror = () => setIsWeddingPhotoUploading(false);
+      reader.readAsDataURL(file);
+    }
+    e.target.value = '';
+  };
+
+  // Upload Local Photo for Wedding Wishes Card
+  const [isWishesPhotoUploading, setIsWishesPhotoUploading] = useState(false);
+  const handleWeddingWishesPhotoUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsWishesPhotoUploading(true);
+    try {
+      const hdDataUrl = await processUploadedImage(file, 1200, 0.88);
+      const photoKey = `wishphoto_${Date.now()}`;
+      try {
+        localStorage.setItem(`vibrant_local_photo_${photoKey}`, hdDataUrl);
+      } catch {}
+
+      setWeddingWishesData((prev) => ({
+        ...prev,
+        photoUrl: hdDataUrl,
+        localPhotoKey: photoKey,
+      }));
+      setIsWishesPhotoUploading(false);
+
+      confetti({
+        particleCount: 40,
+        spread: 60,
+        origin: { y: 0.6 },
+        colors: ['#B76E79', '#D4AF37', '#FAF0E6', '#FFF0F5'],
+      });
+    } catch (err) {
+      console.warn('Wedding wishes photo upload fallback', err);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const rawDataUrl = reader.result as string;
+        setWeddingWishesData((prev) => ({ ...prev, photoUrl: rawDataUrl, localPhotoKey: undefined }));
+        setIsWishesPhotoUploading(false);
+      };
+      reader.onerror = () => setIsWishesPhotoUploading(false);
+      reader.readAsDataURL(file);
+    }
     e.target.value = '';
   };
 
@@ -1085,7 +1110,7 @@ export default function App() {
                         <input
                           id="wedding-photo-file-input"
                           type="file"
-                          accept="image/jpeg,image/png,image/webp,image/jpg"
+                          accept="image/*,.heic,.heif,.HEIC,.HEIF"
                           onChange={handleWeddingPhotoUpload}
                           className="hidden"
                         />
@@ -1103,7 +1128,7 @@ export default function App() {
                       {weddingInviteData.photoUrl && (
                         <button
                           type="button"
-                          onClick={() => setWeddingInviteData((prev) => ({ ...prev, photoUrl: '' }))}
+                          onClick={() => setWeddingInviteData((prev) => ({ ...prev, photoUrl: '', localPhotoKey: undefined }))}
                           className="px-2 py-1 rounded-xl bg-white hover:bg-rose-50 border border-rose-200 text-rose-500 text-xs font-medium transition-colors cursor-pointer flex items-center gap-1 shrink-0"
                           title={t.form.removePhoto}
                         >
@@ -1156,7 +1181,7 @@ export default function App() {
 
                         <button
                           type="button"
-                          onClick={() => setWeddingInviteData((prev) => ({ ...prev, photoUrl: '' }))}
+                          onClick={() => setWeddingInviteData((prev) => ({ ...prev, photoUrl: '', localPhotoKey: undefined }))}
                           className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer shrink-0"
                           title={t.form.removePhoto}
                         >
@@ -1170,7 +1195,7 @@ export default function App() {
                         <button
                           key={preset.label}
                           type="button"
-                          onClick={() => setWeddingInviteData((prev) => ({ ...prev, photoUrl: preset.url }))}
+                          onClick={() => setWeddingInviteData((prev) => ({ ...prev, photoUrl: preset.url, localPhotoKey: undefined }))}
                           className={`text-[10px] px-2 py-0.5 rounded-full border transition-all cursor-pointer ${
                             weddingInviteData.photoUrl === preset.url
                               ? 'bg-[#B76E79] text-white border-[#B76E79] font-bold'
@@ -1263,6 +1288,105 @@ export default function App() {
                         className="w-full px-3 py-1.5 rounded-xl bg-[#FAF9F6] border border-[#E8D3C4] focus:border-[#B76E79] text-xs text-[#5C3A42] focus:outline-hidden"
                       />
                     </div>
+                  </div>
+
+                  {/* Wedding Wishes Photo Upload Container */}
+                  <div className="p-3.5 rounded-2xl bg-[#FFFDFD] border-2 border-dashed border-[#E8D3C4] flex flex-col gap-2.5 shadow-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-[#8C5D67] flex items-center gap-1">
+                        <Camera className="w-3.5 h-3.5 text-[#B76E79]" />
+                        <span>Wishes Photo (Optional):</span>
+                      </span>
+
+                      {/* Upload Photo Button */}
+                      <label 
+                        htmlFor="wedding-wishes-photo-file-input"
+                        className="px-2.5 py-1 rounded-full bg-gradient-to-r from-[#B76E79] to-[#D4AF37] hover:opacity-90 text-white text-[11px] font-bold shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center gap-1 select-none active:scale-95"
+                      >
+                        <Upload className="w-3 h-3" />
+                        <span>{isWishesPhotoUploading ? 'Processing...' : t.form.uploadPhotoBtn}</span>
+                        <input
+                          id="wedding-wishes-photo-file-input"
+                          type="file"
+                          accept="image/*,.heic,.heif,.HEIC,.HEIF"
+                          onChange={handleWeddingWishesPhotoUpload}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+
+                    <div className="flex gap-1.5">
+                      <input
+                        type="text"
+                        value={weddingWishesData.photoUrl}
+                        onChange={(e) => setWeddingWishesData({ ...weddingWishesData, photoUrl: e.target.value, localPhotoKey: undefined })}
+                        placeholder="Paste image URL (https://...) or upload photo"
+                        className="flex-1 px-3 py-1.5 rounded-xl bg-white border border-[#E8D3C4] focus:border-[#B76E79] text-xs text-[#5C3A42] focus:outline-hidden"
+                      />
+                      {weddingWishesData.photoUrl && (
+                        <button
+                          type="button"
+                          onClick={() => setWeddingWishesData((prev) => ({ ...prev, photoUrl: '', localPhotoKey: undefined }))}
+                          className="px-2 py-1 rounded-xl bg-white hover:bg-rose-50 border border-rose-200 text-rose-500 text-xs font-medium transition-colors cursor-pointer flex items-center gap-1 shrink-0"
+                          title={t.form.removePhoto}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Wedding Wishes Photo Preview Thumbnail */}
+                    {weddingWishesData.photoUrl && (
+                      <div className="w-full p-2.5 rounded-2xl bg-white/95 border border-[#E8D3C4] shadow-xs flex items-center justify-between gap-3 animate-fadeIn">
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-2xl overflow-hidden border-2 border-[#E8D3C4] bg-gradient-to-br from-[#FFFDFD] to-[#FDF2EC] relative shadow-xs flex items-center justify-center p-1">
+                            <img
+                              src={weddingWishesData.photoUrl}
+                              alt="Wishes Photo Preview"
+                              referrerPolicy="no-referrer"
+                              className="w-full h-full object-contain rounded-xl"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                const placeholder = e.currentTarget.nextElementSibling as HTMLElement;
+                                if (placeholder) placeholder.style.display = 'flex';
+                              }}
+                            />
+                            <div 
+                              className="w-full h-full flex-col items-center justify-center bg-[#FDF2EC] text-xs text-[#B76E79] select-none"
+                              style={{ display: 'none' }}
+                            >
+                              <span className="text-base">🥂</span>
+                            </div>
+                          </div>
+                          <div className="flex flex-col min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs font-bold text-[#5C3A42] truncate">
+                                {t.form.photoPreview}
+                              </span>
+                              <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-[#FDF2EC] text-[#B76E79] font-bold">
+                                {weddingWishesData.photoUrl.startsWith('data:') ? '📁 Device Photo' : '🌐 Web URL'}
+                              </span>
+                            </div>
+                            <label 
+                              htmlFor="wedding-wishes-photo-file-input" 
+                              className="text-[10px] font-bold text-[#B76E79] hover:underline cursor-pointer flex items-center gap-0.5 mt-1"
+                            >
+                              <RefreshCw className="w-2.5 h-2.5" />
+                              <span>{t.form.changePhoto}</span>
+                            </label>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => setWeddingWishesData((prev) => ({ ...prev, photoUrl: '', localPhotoKey: undefined }))}
+                          className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer shrink-0"
+                          title={t.form.removePhoto}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   <textarea
@@ -1424,7 +1548,7 @@ export default function App() {
                         <input
                           id="photo-card-file-input"
                           type="file"
-                          accept="image/jpeg,image/png,image/webp,image/jpg"
+                          accept="image/*,.heic,.heif,.HEIC,.HEIF"
                           onChange={handlePhotoFileUpload}
                           className="hidden"
                         />
