@@ -107,7 +107,7 @@ export function GreetingViewer({
         )}
       </div>
 
-      <div className={`relative w-full max-w-lg rounded-[40px] shadow-2xl border-4 overflow-hidden flex flex-col items-center p-6 sm:p-8 z-10 my-auto ${
+      <div className={`relative w-full max-w-lg sm:max-w-xl md:max-w-2xl rounded-[40px] shadow-2xl border-4 overflow-hidden flex flex-col items-center p-6 sm:p-8 z-10 my-auto ${
         isWedding 
           ? 'bg-gradient-to-b from-[#FFFDFD] via-[#FFF9F6] to-[#FFF5F2] border-[#E8D3C4]' 
           : 'bg-white border-[#FFE4E1]'
@@ -204,12 +204,12 @@ export function GreetingViewer({
                 </h3>
 
                 {weddingWishesData.photoUrl && (
-                  <div className="w-full max-w-sm sm:max-w-md min-h-[220px] sm:min-h-[280px] rounded-3xl overflow-hidden border-4 border-white shadow-xl mb-4 bg-gradient-to-br from-[#FFFDFD] via-[#FDF2EC] to-[#FAF0E6] relative flex items-center justify-center p-2">
+                  <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl min-h-[220px] sm:min-h-[280px] rounded-3xl overflow-hidden border-4 border-white shadow-xl mb-4 bg-gradient-to-br from-[#FFFDFD] via-[#FDF2EC] to-[#FAF0E6] relative flex items-center justify-center p-2">
                     <img
                       src={weddingWishesData.photoUrl}
                       alt="Wishes Photo"
                       referrerPolicy="no-referrer"
-                      className="w-full h-auto max-h-[440px] object-contain rounded-2xl transition-transform duration-300 hover:scale-[1.02] shadow-xs"
+                      className="w-full h-auto max-h-[480px] object-contain rounded-2xl transition-transform duration-300 hover:scale-[1.02] shadow-xs"
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
                         const placeholder = e.currentTarget.nextElementSibling as HTMLElement;
@@ -290,14 +290,14 @@ export function GreetingViewer({
                   )}
 
                   {/* Photo Card Frame with Guaranteed No-Broken-Image Fallback */}
-                  <div className="w-full max-w-sm sm:max-w-md min-h-[260px] sm:min-h-[300px] rounded-3xl overflow-hidden border-4 border-white shadow-xl mb-4 bg-gradient-to-br from-[#FFF0F5] via-[#FFF9FB] to-[#F7F0FF] relative group flex items-center justify-center p-2">
+                  <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl min-h-[260px] sm:min-h-[320px] rounded-3xl overflow-hidden border-4 border-white shadow-xl mb-4 bg-gradient-to-br from-[#FFF0F5] via-[#FFF9FB] to-[#F7F0FF] relative group flex items-center justify-center p-2">
                     {displayImage ? (
                       <>
                         <img
                           src={displayImage}
                           alt="Card Photo"
                           referrerPolicy="no-referrer"
-                          className="w-full h-auto max-h-[480px] object-contain rounded-2xl transition-transform duration-300 group-hover:scale-[1.02] shadow-xs"
+                          className="w-full h-auto max-h-[520px] object-contain rounded-2xl transition-transform duration-300 group-hover:scale-[1.02] shadow-xs"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                             const placeholder = e.currentTarget.nextElementSibling as HTMLElement;

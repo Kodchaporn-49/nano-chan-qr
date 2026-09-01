@@ -1114,14 +1114,14 @@ export default function App() {
 
                     {/* Wedding Photo Preview Thumbnail */}
                     {weddingInviteData.photoUrl && (
-                      <div className="w-full p-2 rounded-xl bg-white/95 border border-[#E8D3C4] shadow-xs flex items-center justify-between gap-2.5 animate-fadeIn">
-                        <div className="flex items-center gap-2 overflow-hidden">
-                          <div className="w-12 h-12 shrink-0 rounded-lg overflow-hidden border border-[#E8D3C4] bg-[#FDF2EC] relative shadow-xs flex items-center justify-center">
+                      <div className="w-full p-2.5 rounded-2xl bg-white/95 border border-[#E8D3C4] shadow-xs flex items-center justify-between gap-3 animate-fadeIn">
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-2xl overflow-hidden border-2 border-[#E8D3C4] bg-gradient-to-br from-[#FFFDFD] to-[#FDF2EC] relative shadow-xs flex items-center justify-center p-1">
                             <img
                               src={weddingInviteData.photoUrl}
                               alt="Wedding Cover Preview"
                               referrerPolicy="no-referrer"
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-contain rounded-xl"
                               onError={(e) => {
                                 e.currentTarget.style.display = 'none';
                                 const placeholder = e.currentTarget.nextElementSibling as HTMLElement;
@@ -1137,7 +1137,7 @@ export default function App() {
                           </div>
                           <div className="flex flex-col min-w-0">
                             <div className="flex items-center gap-1.5">
-                              <span className="text-[11px] font-bold text-[#5C3A42] truncate">
+                              <span className="text-xs font-bold text-[#5C3A42] truncate">
                                 {t.form.photoPreview}
                               </span>
                               <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-[#FDF2EC] text-[#B76E79] font-bold">
@@ -1146,7 +1146,7 @@ export default function App() {
                             </div>
                             <label 
                               htmlFor="wedding-photo-file-input" 
-                              className="text-[10px] font-bold text-[#B76E79] hover:underline cursor-pointer flex items-center gap-0.5 mt-0.5"
+                              className="text-[10px] font-bold text-[#B76E79] hover:underline cursor-pointer flex items-center gap-0.5 mt-1"
                             >
                               <RefreshCw className="w-2.5 h-2.5" />
                               <span>{t.form.changePhoto}</span>
@@ -1157,10 +1157,10 @@ export default function App() {
                         <button
                           type="button"
                           onClick={() => setWeddingInviteData((prev) => ({ ...prev, photoUrl: '' }))}
-                          className="p-1 rounded-md text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer shrink-0"
+                          className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer shrink-0"
                           title={t.form.removePhoto}
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     )}
@@ -1501,14 +1501,14 @@ export default function App() {
 
                     {/* Photo Preview Thumbnail & Details Card */}
                     {photoCardData.imageUrl && (
-                      <div className="w-full p-2.5 rounded-xl bg-white/95 border border-[#D1C4E9] shadow-xs flex items-center justify-between gap-3 animate-fadeIn">
-                        <div className="flex items-center gap-2.5 overflow-hidden">
-                          <div className="w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-xl overflow-hidden border-2 border-[#E1BEE7] bg-[#F3E5F5] relative shadow-xs flex items-center justify-center">
+                      <div className="w-full p-2.5 rounded-2xl bg-white/95 border border-[#D1C4E9] shadow-xs flex items-center justify-between gap-3 animate-fadeIn">
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-2xl overflow-hidden border-2 border-[#E1BEE7] bg-gradient-to-br from-[#FFF0F5] to-[#F3E5F5] relative shadow-xs flex items-center justify-center p-1">
                             <img
                               src={photoCardData.imageUrl}
                               alt="Selected Photo Preview"
                               referrerPolicy="no-referrer"
-                              className="w-full h-full object-cover transition-transform hover:scale-110 duration-300"
+                              className="w-full h-full object-contain rounded-xl transition-transform hover:scale-105 duration-300"
                               onError={(e) => {
                                 e.currentTarget.style.display = 'none';
                                 const placeholder = e.currentTarget.nextElementSibling as HTMLElement;
@@ -1528,11 +1528,11 @@ export default function App() {
                                 {t.form.photoPreview}
                               </span>
                               <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#EDE7F6] text-[#673AB7] font-bold">
-                                {photoCardData.imageUrl.startsWith('data:') ? '📁 HD Photo (Full Aspect Ratio ✨)' : '🌐 Web URL (Full Aspect Ratio ✨)'}
+                                {photoCardData.imageUrl.startsWith('data:') ? '📁 HD Photo (Original Aspect ✨)' : '🌐 Web URL (Original Aspect ✨)'}
                               </span>
                             </div>
                             <p className="text-[10px] text-gray-500 truncate max-w-[180px] sm:max-w-xs mt-0.5">
-                              {photoCardData.imageUrl.startsWith('data:') ? 'High-Definition HD & full original photo fitted ✨' : photoCardData.imageUrl}
+                              {photoCardData.imageUrl.startsWith('data:') ? 'High-Definition HD uncropped photo ✨' : photoCardData.imageUrl}
                             </p>
                             <div className="flex items-center gap-2.5 mt-1">
                               <label 
@@ -1866,6 +1866,10 @@ export default function App() {
               themeMode={appTheme}
               onOpenViewer={handleOpenCurrentPreview}
               t={t}
+              greetingData={greetingData}
+              photoCardData={photoCardData}
+              weddingInviteData={weddingInviteData}
+              weddingWishesData={weddingWishesData}
             />
           </div>
 

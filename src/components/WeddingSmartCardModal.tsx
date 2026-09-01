@@ -185,7 +185,7 @@ export function WeddingSmartCardModal({ isOpen, onClose, data }: WeddingSmartCar
       </div>
 
       {/* Main Card Container: Rose Gold & Luxury White theme */}
-      <div className="relative w-full max-w-xl bg-gradient-to-b from-[#FFFDFD] via-[#FFF9F6] to-[#FFF5F2] rounded-[36px] sm:rounded-[44px] shadow-2xl border-4 border-[#E8D3C4] overflow-hidden flex flex-col my-auto max-h-[92vh] z-10">
+      <div className="relative w-full max-w-xl sm:max-w-2xl lg:max-w-3xl bg-gradient-to-b from-[#FFFDFD] via-[#FFF9F6] to-[#FFF5F2] rounded-[36px] sm:rounded-[44px] shadow-2xl border-4 border-[#E8D3C4] overflow-hidden flex flex-col my-auto max-h-[92vh] z-10">
         
         {/* Top Header Bar */}
         <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-md px-5 py-3 border-b border-[#E8D3C4]/80 flex items-center justify-between">
@@ -244,12 +244,12 @@ export function WeddingSmartCardModal({ isOpen, onClose, data }: WeddingSmartCar
             </p>
 
             {/* Hero Main Photo */}
-            <div className="relative w-full max-w-lg min-h-[260px] sm:min-h-[320px] rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-gradient-to-br from-[#FFFDFD] via-[#FDF2EC] to-[#FAF0E6] group flex items-center justify-center p-2">
+            <div className="relative w-full max-w-xl min-h-[260px] sm:min-h-[340px] rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-gradient-to-br from-[#FFFDFD] via-[#FDF2EC] to-[#FAF0E6] group flex items-center justify-center p-2">
               <img
                 src={data.photoUrl || (data.localPhotoKey ? (typeof window !== 'undefined' ? localStorage.getItem(`vibrant_local_photo_${data.localPhotoKey}`) : '') : '') || 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop&q=80'}
                 alt="Wedding Couple"
                 referrerPolicy="no-referrer"
-                className="w-full h-auto max-h-[460px] object-contain rounded-2xl group-hover:scale-[1.02] transition-transform duration-500 shadow-xs"
+                className="w-full h-auto max-h-[520px] object-contain rounded-2xl group-hover:scale-[1.02] transition-transform duration-500 shadow-xs"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                   const placeholder = e.currentTarget.nextElementSibling as HTMLElement;
